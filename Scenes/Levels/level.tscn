@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://bmy3kdndn3ik8"]
+
+[ext_resource type="Script" path="res://Scripts/Utilities/Level_1.gd" id="1_nrhgr"]
+[ext_resource type="TileSet" uid="uid://dtilwecm1cb54" path="res://Resources/TileSets/Mario.tres" id="2_lkqqh"]
+[ext_resource type="PackedScene" uid="uid://n0yxyoxlhxje" path="res://Scenes/Characters/Player.tscn" id="3_lghg4"]
+
+[sub_resource type="Environment" id="Environment_fl01k"]
+
+[node name="Level" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_nrhgr")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_fl01k")
+
+[node name="Objects" type="TileMapLayer" parent="."]
+z_index = 1
+y_sort_enabled = true
+use_parent_material = true
+tile_set = ExtResource("2_lkqqh")
+
+[node name="Player" parent="." instance=ExtResource("3_lghg4")]
+z_index = 1
+position = Vector2(257, 203)

@@ -1,0 +1,95 @@
+[gd_scene load_steps=13 format=3 uid="uid://n0yxyoxlhxje"]
+
+[ext_resource type="PackedScene" uid="uid://bhqaprne6b6ar" path="res://Scenes/Characters/Character.tscn" id="1_njs7q"]
+[ext_resource type="Shader" path="res://Shaders/Flash.gdshader" id="2_4hss8"]
+[ext_resource type="Script" path="res://Scripts/Controller_System/Controllers/Player.gd" id="2_b4hxx"]
+[ext_resource type="AudioStream" uid="uid://byncbryqwbikw" path="res://Assets/SFX/Overworld - Super Mario Bros Remastered 80s Style.mp3" id="6_clud3"]
+[ext_resource type="Script" path="res://Scripts/Camera_System/Camera2D.gd" id="12_sipgu"]
+[ext_resource type="Shader" path="res://Scenes/Characters/vignette.gdshader" id="13_lhvp3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7qdam"]
+size = Vector2(9.77923, 5.00084)
+
+[sub_resource type="Gradient" id="Gradient_vvlp1"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_581gv"]
+frequency = 0.0385
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_uku8a"]
+width = 1211
+height = 241
+color_ramp = SubResource("Gradient_vvlp1")
+noise = SubResource("FastNoiseLite_581gv")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7qdam"]
+resource_local_to_scene = true
+shader = ExtResource("2_4hss8")
+shader_parameter/flashColor = Color(1, 1, 1, 1)
+shader_parameter/intensity = 0.0
+shader_parameter/wave = 0.0
+shader_parameter/speed = 1.0
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_uku8a")
+shader_parameter/dissolve_value = 0.0
+shader_parameter/burn_size = 0.06
+shader_parameter/burn_color = Color(0.884951, 0, 0.195523, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m5ivh"]
+shader = ExtResource("13_lhvp3")
+shader_parameter/blur_radius = 0.477
+shader_parameter/blur_amount = 3.142
+shader_parameter/blur_inner = 0.535
+shader_parameter/blur_outer = 1.0
+
+[node name="Player" groups=["Player"] instance=ExtResource("1_njs7q")]
+collision_mask = 6
+script = ExtResource("2_b4hxx")
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2(0, -4)
+
+[node name="HurtBox" parent="." index="1"]
+visible = true
+position = Vector2(-1.42109e-14, -2)
+scale = Vector2(1.32935, 1.39977)
+collision_layer = 1
+collision_mask = 2
+
+[node name="CollisionShape2D" parent="HurtBox" index="0"]
+position = Vector2(-2.98023e-08, -3.57203)
+shape = SubResource("RectangleShape2D_7qdam")
+
+[node name="AnimatedSprite2D" parent="." index="2"]
+material = SubResource("ShaderMaterial_7qdam")
+position = Vector2(0, -8)
+offset = Vector2(0, -5)
+canLean = true
+
+[node name="Camera2D" type="Camera2D" parent="." index="3"]
+ignore_rotation = false
+zoom = Vector2(3, 3)
+limit_smoothed = true
+position_smoothing_enabled = true
+position_smoothing_speed = 4.0
+rotation_smoothing_enabled = true
+script = ExtResource("12_sipgu")
+
+[node name="Vision" parent="." index="4"]
+visible = true
+position = Vector2(0, -5)
+color = Color(0.577362, 0.807441, 1, 1)
+energy = 0.2
+texture_scale = 0.5
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." index="5"]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" index="0"]
+material = SubResource("ShaderMaterial_m5ivh")
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 1)
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." index="6"]
+stream = ExtResource("6_clud3")
+autoplay = true
+
+[connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]

@@ -1,0 +1,68 @@
+[gd_resource type="SpriteFrames" load_steps=8 format=3 uid="uid://deg68u12qkw8j"]
+
+[ext_resource type="Texture2D" uid="uid://dvgro6qx24ss0" path="res://Assets/Sprites/Mario/Characters/Mario.png" id="1_wk7jb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kxvca"]
+atlas = ExtResource("1_wk7jb")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bg0n7"]
+atlas = ExtResource("1_wk7jb")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fjk6p"]
+atlas = ExtResource("1_wk7jb")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fekay"]
+atlas = ExtResource("1_wk7jb")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n4c2d"]
+atlas = ExtResource("1_wk7jb")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xhgny"]
+atlas = ExtResource("1_wk7jb")
+region = Rect2(64, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kxvca")
+}],
+"loop": true,
+"name": &"Death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bg0n7")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fjk6p")
+}],
+"loop": true,
+"name": &"Jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fekay")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n4c2d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xhgny")
+}],
+"loop": true,
+"name": &"Run",
+"speed": 12.0
+}]

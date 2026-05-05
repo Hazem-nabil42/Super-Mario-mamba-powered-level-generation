@@ -1,0 +1,59 @@
+[gd_resource type="SpriteFrames" load_steps=5 format=3 uid="uid://dv1b3spuvuka5"]
+
+[ext_resource type="Texture2D" uid="uid://b8yb8b15ehusx" path="res://Assets/Sprites/Mario/Characters/Enemies.png" id="6_ia41k"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mg6tn"]
+atlas = ExtResource("6_ia41k")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_db7oi"]
+atlas = ExtResource("6_ia41k")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ia41k"]
+atlas = ExtResource("6_ia41k")
+region = Rect2(32, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mg6tn")
+}],
+"loop": false,
+"name": &"Death",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_db7oi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ia41k")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_db7oi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ia41k")
+}],
+"loop": true,
+"name": &"Jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_db7oi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ia41k")
+}],
+"loop": true,
+"name": &"Run",
+"speed": 10.0
+}]

@@ -1,0 +1,4 @@
+extends Node2D
+
+func _ready():
+	Engine.time_scale = 50.0

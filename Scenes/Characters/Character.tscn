@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://bhqaprne6b6ar"]
+
+[ext_resource type="PackedScene" uid="uid://dvlepbn0ye3t" path="res://Scenes/Characters/Object.tscn" id="1_xm7aa"]
+[ext_resource type="Script" uid="uid://cq22c7rsj88gt" path="res://Scripts/Controller_System/Classes/Character.gd" id="2_kw3v4"]
+[ext_resource type="Shader" uid="uid://dr2rb2xluqia6" path="res://Shaders/Flash.gdshader" id="3_fusxw"]
+[ext_resource type="SpriteFrames" uid="uid://deg68u12qkw8j" path="res://Resources/Animations/Player.tres" id="9_wgafg"]
+[ext_resource type="Script" uid="uid://bbky6nqhjksxh" path="res://Scripts/Animation_System/Animate.gd" id="10_qcfiy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bh38l"]
+radius = 6.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jsi55"]
+size = Vector2(16, 8)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rt6oa"]
+resource_local_to_scene = true
+shader = ExtResource("3_fusxw")
+shader_parameter/flashColor = Color(1, 1, 1, 1)
+shader_parameter/intensity = 0.0
+shader_parameter/wave = 0.0
+shader_parameter/speed = 1.0
+shader_parameter/dissolve_value = 0.0
+shader_parameter/burn_size = 0.1
+shader_parameter/burn_color = Color(1, 0.5, 0, 1)
+
+[sub_resource type="Gradient" id="Gradient_s5q3n"]
+interpolation_color_space = 2
+colors = PackedColorArray(1, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_cl7c0"]
+gradient = SubResource("Gradient_s5q3n")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[node name="Character" unique_id=287830756 groups=["Character"] instance=ExtResource("1_xm7aa")]
+y_sort_enabled = true
+collision_mask = 65
+script = ExtResource("2_kw3v4")
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2(-0.5, -6)
+shape = SubResource("CircleShape2D_bh38l")
+
+[node name="HurtBox" type="Area2D" parent="." index="1" unique_id=512373195]
+visible = false
+collision_layer = 0
+collision_mask = 0
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" index="0" unique_id=222220813]
+position = Vector2(0, -7.5)
+shape = SubResource("RectangleShape2D_jsi55")
+debug_color = Color(0, 0.392157, 1, 0.392157)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="2" unique_id=1570422754]
+y_sort_enabled = true
+texture_filter = 1
+material = SubResource("ShaderMaterial_rt6oa")
+position = Vector2(0, -16)
+sprite_frames = ExtResource("9_wgafg")
+animation = &"Death"
+script = ExtResource("10_qcfiy")
+metadata/_edit_lock_ = true
+
+[node name="Vision" type="PointLight2D" parent="." index="3" unique_id=1414362846]
+visible = false
+position = Vector2(0, -9)
+scale = Vector2(2, 2)
+energy = 0.25
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+shadow_filter = 1
+shadow_filter_smooth = 1.0
+shadow_item_cull_mask = 127
+texture = SubResource("GradientTexture2D_cl7c0")
+metadata/_edit_lock_ = true

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://byncbryqwbikw"
+path="res://.godot/imported/Overworld - Super Mario Bros Remastered 80s Style.mp3-c3d9acd257e306beff3a85dd45ea5595.mp3str"
+
+[deps]
+
+source_file="res://Assets/SFX/Overworld - Super Mario Bros Remastered 80s Style.mp3"
+dest_files=["res://.godot/imported/Overworld - Super Mario Bros Remastered 80s Style.mp3-c3d9acd257e306beff3a85dd45ea5595.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

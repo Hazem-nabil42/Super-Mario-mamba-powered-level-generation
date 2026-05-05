@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://c64w5ncxo7j3x"]
+
+[ext_resource type="PackedScene" uid="uid://bmy3kdndn3ik8" path="res://Scenes/Levels/level.tscn" id="1_nep6i"]
+
+[node name="Level1" type="Node2D"]
+
+[node name="Level" parent="." instance=ExtResource("1_nep6i")]
+metadata/_edit_lock_ = true
+
+[node name="Night" parent="Level" index="0"]
+visible = true
+
+[node name="Obstacles" parent="Level/Objects" index="0"]
+enabled = true
+
+[editable path="Level"]

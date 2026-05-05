@@ -1,0 +1,218 @@
+[gd_scene load_steps=29 format=3 uid="uid://bmdyjuaigpb6"]
+
+[ext_resource type="Script" path="res://Scripts/Controller_System/SubClasses/Enemy.gd" id="1_6duoi"]
+[ext_resource type="Shader" path="res://Shaders/Flash.gdshader" id="2_emjoq"]
+[ext_resource type="SpriteFrames" uid="uid://dhj471aea3els" path="res://Resources/Animations/Slime.tres" id="3_3300b"]
+[ext_resource type="Script" path="res://Scripts/Animation_System/Animate.gd" id="4_gaeub"]
+[ext_resource type="Script" path="res://Scripts/Hitbox_System/Hitboxes/Hitbox.gd" id="4_rwpe2"]
+[ext_resource type="Script" path="res://Scripts/Attributes_System/Controller/Attributes.gd" id="5_drin5"]
+[ext_resource type="Script" path="res://Scripts/Attributes_System/Attributes/Agility.gd" id="6_yplp0"]
+[ext_resource type="Script" path="res://Scripts/Attributes_System/Attributes/Health.gd" id="7_q70ko"]
+[ext_resource type="Script" path="res://Scripts/Attributes_System/Attributes/Strength.gd" id="8_xcgsk"]
+[ext_resource type="Script" path="res://Scripts/Skills_System/Controllers/Skills.gd" id="9_jgi0a"]
+[ext_resource type="Script" path="res://Scripts/Skills_System/Controllers/VFX.gd" id="10_2nref"]
+[ext_resource type="Texture2D" uid="uid://c501143vdmn7j" path="res://Assets/VFX/Sprite-0001-Sheet.png" id="11_pjxpo"]
+[ext_resource type="Script" path="res://Scripts/Skills_System/Controllers/SFX.gd" id="12_xi7hy"]
+[ext_resource type="AudioStream" uid="uid://bofn0huy044u8" path="res://Assets/SFX/hit.wav" id="13_1nfs3"]
+[ext_resource type="Script" path="res://Scripts/Utilities/State Machine.gd" id="14_b5teo"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ycc57"]
+resource_local_to_scene = true
+shader = ExtResource("2_emjoq")
+shader_parameter/flashColor = Color(1, 1, 1, 1)
+shader_parameter/intensity = 0.0
+shader_parameter/wave = 0.0
+shader_parameter/speed = 1.0
+shader_parameter/dissolve_value = 0.0
+shader_parameter/burn_size = 0.1
+shader_parameter/burn_color = Color(1, 0.5, 0, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_morbi"]
+
+[sub_resource type="Gradient" id="Gradient_dtuu1"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.864035)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_u1gop"]
+gradient = SubResource("Gradient_dtuu1")
+width = 8
+height = 8
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="Curve" id="Curve_p2ovw"]
+bake_resolution = 20
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_botiw"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.864035)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_4ph7x"]
+gradient = SubResource("Gradient_botiw")
+width = 8
+height = 8
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="Curve" id="Curve_vpbdg"]
+bake_resolution = 20
+_data = [Vector2(0, 0.480408), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_wwdij"]
+blend_mode = 1
+particles_animation = true
+particles_anim_h_frames = 2
+particles_anim_v_frames = 2
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_ssbqo"]
+bake_resolution = 20
+_data = [Vector2(0, 0.307692), 0.0, 0.0, 0, 0, Vector2(0.588957, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_fcmxv"]
+colors = PackedColorArray(0.739726, 0.84865, 1, 1, 0, 0.980392, 0.619608, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5pqbv"]
+radius = 8.06226
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hvy3p"]
+radius = 5.3033
+
+[node name="Slime" type="CharacterBody2D"]
+collision_layer = 8
+collision_mask = 64
+script = ExtResource("1_6duoi")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+material = SubResource("ShaderMaterial_ycc57")
+sprite_frames = ExtResource("3_3300b")
+animation = &"Attack"
+autoplay = "Idle"
+frame = 14
+frame_progress = 1.0
+script = ExtResource("4_gaeub")
+directional = false
+rotational = true
+canLean = true
+metadata/_edit_lock_ = true
+
+[node name="Attributes" type="Node" parent="."]
+script = ExtResource("5_drin5")
+
+[node name="Agility" type="Node" parent="Attributes"]
+script = ExtResource("6_yplp0")
+speed = 50.0
+acceleration = 4.0
+
+[node name="Health" type="Node" parent="Attributes"]
+script = ExtResource("7_q70ko")
+
+[node name="Strength" type="Node" parent="Attributes"]
+script = ExtResource("8_xcgsk")
+
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+shape = SubResource("CircleShape2D_morbi")
+debug_color = Color(0, 0.392157, 1, 0.196078)
+
+[node name="Skills" type="Node" parent="."]
+script = ExtResource("9_jgi0a")
+
+[node name="VFX" type="Node2D" parent="."]
+script = ExtResource("10_2nref")
+metadata/_edit_lock_ = true
+
+[node name="Damage" type="CPUParticles2D" parent="VFX"]
+emitting = false
+amount = 32
+lifetime = 2.0
+explosiveness = 1.0
+randomness = 1.0
+lifetime_randomness = 1.0
+texture = SubResource("GradientTexture2D_u1gop")
+direction = Vector2(0, -1)
+spread = 150.0
+gravity = Vector2(0, 20)
+initial_velocity_min = 20.0
+initial_velocity_max = 50.0
+linear_accel_min = -40.0
+linear_accel_max = -20.0
+angle_max = 90.0
+scale_amount_min = 0.8
+scale_amount_max = 1.2
+scale_amount_curve = SubResource("Curve_p2ovw")
+
+[node name="Dash" type="CPUParticles2D" parent="VFX"]
+position = Vector2(0, 4)
+emitting = false
+amount = 32
+randomness = 0.5
+texture = SubResource("GradientTexture2D_4ph7x")
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, -20)
+initial_velocity_min = 10.0
+initial_velocity_max = 25.0
+linear_accel_max = 5.0
+angle_max = 90.0
+scale_amount_curve = SubResource("Curve_vpbdg")
+
+[node name="Slash" type="CPUParticles2D" parent="VFX"]
+material = SubResource("CanvasItemMaterial_wwdij")
+emitting = false
+amount = 1
+lifetime = 0.3
+one_shot = true
+texture = ExtResource("11_pjxpo")
+direction = Vector2(0, -1)
+spread = 0.0
+gravity = Vector2(0, 50)
+initial_velocity_min = 78.02
+initial_velocity_max = 78.02
+angular_velocity_min = -80.88
+angular_velocity_max = -36.43
+linear_accel_min = -2000.0
+linear_accel_max = -2000.0
+angle_max = 180.0
+scale_amount_min = 0.8
+scale_amount_max = 1.2
+scale_amount_curve = SubResource("Curve_ssbqo")
+color_ramp = SubResource("Gradient_fcmxv")
+anim_speed_min = 2.0
+anim_speed_max = 2.0
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 4
+script = ExtResource("4_rwpe2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_5pqbv")
+debug_color = Color(1, 0, 0, 0.321569)
+
+[node name="SFX" type="Node2D" parent="."]
+script = ExtResource("12_xi7hy")
+
+[node name="Hit" type="AudioStreamPlayer2D" parent="SFX"]
+stream = ExtResource("13_1nfs3")
+
+[node name="State Machine" type="Node" parent="."]
+script = ExtResource("14_b5teo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_hvy3p")
+debug_color = Color(0, 1, 0, 0.196078)
+
+[connection signal="area_entered" from="Hitbox" to="Hitbox" method="_on_area_entered"]
