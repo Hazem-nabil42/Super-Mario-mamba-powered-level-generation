@@ -11,7 +11,7 @@ signal generation_failed(error: String, response: String)
 @export var use_auto_path: bool = true
 
 # ✅ المتغيرات الناقصة
-const BASE_URL: String = "http://127.0.0.1:8000/api"
+const BASE_URL: String = "https://mario_backend.hf.space/api"
 var http_load: HTTPRequest = null
 var http_generate: HTTPRequest = null
 
