@@ -12,7 +12,7 @@ config_version=5
 
 config/name="SuperMario"
 run/main_scene="uid://c64w5ncxo7j3x"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 boot_splash/show_image=false
 run/size/resizable=true
 

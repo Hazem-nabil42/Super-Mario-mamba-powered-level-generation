@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://c64w5ncxo7j3x"]
+
+[ext_resource type="PackedScene" uid="uid://bmy3kdndn3ik8" path="res://Scenes/Levels/level.tscn" id="1_nep6i"]
+[ext_resource type="Script" uid="uid://bf6gunl30j2yn" path="res://Scenes/Levels/Gemini.gd" id="3_01viu"]
+
+[sub_resource type="Gradient" id="Gradient_01viu"]
+colors = PackedColorArray(0.517647, 0.670588, 1, 1, 0.515792, 0.672529, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5ohet"]
+gradient = SubResource("Gradient_01viu")
+
+[node name="Level1" type="Node2D"]
+
+[node name="Island" parent="." node_paths=PackedStringArray("Layer") instance=ExtResource("1_nep6i")]
+position = Vector2(8, 0)
+Layer = NodePath("Objects")
+map_path = "res://Resources/Dataset/Processed/mario-1-1.txt"
+
+[node name="Player" parent="Island" index="2"]
+z_index = 2
+position = Vector2(-398, -161)
+
+[node name="Gemini2" type="Node" parent="Island"]
+script = ExtResource("3_01viu")
+Enabled = false
+model_path = "C:/Users/Demo401/Desktop/Mario FastAPI/mario_model_mamba.pt"
+
+[node name="Sprite2D" type="Sprite2D" parent="Island"]
+position = Vector2(-331, -378)
+scale = Vector2(45.9219, 7686)
+texture = SubResource("GradientTexture1D_5ohet")
+metadata/_edit_lock_ = true
+
+[connection signal="generation" from="Island/Gemini2" to="Island" method="_on_gemini_generation"]
+
+[editable path="Island"]

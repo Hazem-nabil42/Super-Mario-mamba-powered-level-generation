@@ -12,6 +12,7 @@ var spawnLocation : Vector2
 var endTime = 0
 var deathTimes = 0
 var dying = false
+var is_transitioning = false
 
 func _ready():
 	spawnLocation = position
@@ -29,17 +30,33 @@ func estimateLevel():
 	var time_score = clamp(1.0 - (time_taken / max_expected_time), 0.0, 1.0)
 	var death_score = clamp(1.0 - (deaths / max_expected_deaths), 0.0, 1.0)
 	
-	playerLevel = time_score * death_score
+	#playerLevel = time_score * death_score
+	var performance = time_score * death_score
+
+	# نزود الصعوبة تدريجياً لما اللاعب ينجح
+	playerLevel = lerp(playerLevel, performance + 0.15, 0.6)
+	playerLevel = clamp(playerLevel, 0.05, 0.95)
+	
 	print("player level estimation is ", playerLevel)
 	endTime = 0
 	deathTimes = 0
 	
 
 func _physics_process(delta: float) -> void:
-	if position.x > get_parent().rightmost_world:
+	if is_transitioning: 
+		velocity = Vector2.ZERO
+		return
+		
+	endTime += delta
+	if not is_transitioning and position.x > get_parent().rightmost_world:
+		is_transitioning = true
+		velocity = Vector2.ZERO
 		estimateLevel()
 		get_parent().ChangeMap(playerLevel)
+		# Wait a frame or two before teleporting or do it immediately
 		position = spawnLocation
+		# Important: We keep is_transitioning true until Level_1 tells us the map is ready
+		# and it will reset it in update_player_spawn()
 		
 	if position.y > 100:
 		die()
@@ -83,9 +100,20 @@ func win():
 	pass
 
 func die():
+	
 	if dying == true: return
 	dying = true
 	deathTimes += 1
+	# ⭐ لو اللاعب مات 3 مرات → غير الماب فوراً
+	if deathTimes >= 3:
+		var new_diff = get_adaptive_difficulty()
+		deathTimes = 0
+		get_parent().ChangeMap(new_diff)
+	
+	# Update HUD
+	var hud = get_tree().get_first_node_in_group("HUD")
+	if hud:
+		hud.update_deaths(deathTimes)
 	get_node("CollisionShape2D").set_deferred("disabled",true)
 	hurtbox.get_node("CollisionShape2D").set_deferred("disabled",true)
 	flash = 1
@@ -101,3 +129,16 @@ func die():
 func _on_hurt_box_body_entered(body: Node2D) -> void:
 	if body.is_in_group("Enemy"):
 		die()
+		
+# Adaptive level generation
+func get_adaptive_difficulty() -> float:
+	var death_factor = clamp(deathTimes / 3.0, 0.0, 1.0)
+	var time_factor = clamp(endTime / 60.0, 0.0, 1.0)
+
+	# لو بيموت كتير → نزود الصعوبة
+	# لو الوقت بيطول → نقلل الصعوبة
+	var adaptive = playerLevel + (death_factor * 0.3) - (time_factor * 0.2)
+
+	adaptive = clamp(adaptive, 0.05, 0.95)
+	print("Adaptive difficulty =", adaptive)
+	return adaptive

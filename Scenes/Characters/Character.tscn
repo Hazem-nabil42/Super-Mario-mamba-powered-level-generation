@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bhqaprne6b6ar"]
+[gd_scene load_steps=11 format=3 uid="uid://bhqaprne6b6ar"]
 
 [ext_resource type="PackedScene" uid="uid://dvlepbn0ye3t" path="res://Scenes/Characters/Object.tscn" id="1_xm7aa"]
 [ext_resource type="Script" uid="uid://cq22c7rsj88gt" path="res://Scripts/Controller_System/Classes/Character.gd" id="2_kw3v4"]
@@ -35,7 +35,7 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.5, 0)
 
-[node name="Character" unique_id=287830756 groups=["Character"] instance=ExtResource("1_xm7aa")]
+[node name="Character" groups=["Character"] instance=ExtResource("1_xm7aa")]
 y_sort_enabled = true
 collision_mask = 65
 script = ExtResource("2_kw3v4")
@@ -44,18 +44,18 @@ script = ExtResource("2_kw3v4")
 position = Vector2(-0.5, -6)
 shape = SubResource("CircleShape2D_bh38l")
 
-[node name="HurtBox" type="Area2D" parent="." index="1" unique_id=512373195]
+[node name="HurtBox" type="Area2D" parent="." index="1"]
 visible = false
 collision_layer = 0
 collision_mask = 0
 metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" index="0" unique_id=222220813]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" index="0"]
 position = Vector2(0, -7.5)
 shape = SubResource("RectangleShape2D_jsi55")
 debug_color = Color(0, 0.392157, 1, 0.392157)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="2" unique_id=1570422754]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="2"]
 y_sort_enabled = true
 texture_filter = 1
 material = SubResource("ShaderMaterial_rt6oa")
@@ -65,7 +65,7 @@ animation = &"Death"
 script = ExtResource("10_qcfiy")
 metadata/_edit_lock_ = true
 
-[node name="Vision" type="PointLight2D" parent="." index="3" unique_id=1414362846]
+[node name="Vision" type="PointLight2D" parent="." index="3"]
 visible = false
 position = Vector2(0, -9)
 scale = Vector2(2, 2)

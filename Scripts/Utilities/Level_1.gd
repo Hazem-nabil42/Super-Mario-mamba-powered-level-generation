@@ -7,7 +7,11 @@ var levels = get_all_levels_content("res://Resources/Dataset/Processed/")
 var Map: String
 var enemies := []
 signal enemyDeath
-var rightmost_world = 10000
+var rightmost_world = 99999
+@export var AI_Generator : AILevelGenerator
+@export var MiniMap : CanvasLayer # MiniMapPreview
+@export var HUD : CanvasLayer
+
 var currentDifficulty = 0.1
 var INDEX_SYMBOL = {
 	-1: "-",
@@ -93,7 +97,7 @@ func ReverseCoords(symbol):
 signal EnemyDeath
 
 func _ready():
-	Map = levels[0]
+	print("[AI_DEBUG] Level _ready started.")
 	child_entered_tree.connect(func(child):
 		if child is Enemy:
 			enemies.append(child)
@@ -101,11 +105,63 @@ func _ready():
 				EnemyDeath.emit(child)
 			)
 	)
-	if Map and GenerateMap:
-		TextToMap()
+	
+	# --- AI Generator Setup ---
+	if AI_Generator == null:
+		print("[AI_DEBUG] Searching for AI_Generator in scene...")
+		for child in get_tree().root.find_children("*", "AILevelGenerator", true, false):
+			AI_Generator = child
+			break
+			
+	if AI_Generator == null:
+		print("[AI_DEBUG] AI_Generator not found. Instantiating a new one...")
+		AI_Generator = AILevelGenerator.new()
+		add_child(AI_Generator)
+		print("[AI_DEBUG] New AI_Generator created and added to scene.")
+
+	if not AI_Generator.model_loaded.is_connected(_on_ai_model_loaded):
+		AI_Generator.model_loaded.connect(_on_ai_model_loaded)
+	if not AI_Generator.level_generated.is_connected(_on_ai_level_generated):
+		AI_Generator.level_generated.connect(_on_ai_level_generated)
+	
+	# --- MiniMap Setup ---
+	if MiniMap == null:
+		print("[AI_DEBUG] Searching for MiniMap in scene...")
+		for child in get_tree().root.find_children("*", "CanvasLayer", true, false):
+			if "MiniMap" in child.name:
+				MiniMap = child
+				break
+	
+	if MiniMap == null:
+		print("[AI_DEBUG] MiniMap not found. Instantiating a new one...")
+		var minimap_scene = preload("res://Scenes/UI/MiniMapPreview.tscn")
+		MiniMap = minimap_scene.instantiate()
+		add_child(MiniMap)
+		print("[AI_DEBUG] New MiniMap created and added to scene.")
+
+	# --- HUD Setup ---
+	if HUD == null:
+		print("[AI_DEBUG] Creating HUD...")
+		var hud_scene = preload("res://Scenes/UI/HUD.tscn")
+		HUD = hud_scene.instantiate()
+		add_child(HUD)
+
+	# --- Start Flow ---
+	if GenerateMap:
+		# We wait for the model to be loaded before we request the first generation
+		print("[AI_DEBUG] Waiting for model to be loaded on backend...")
 	else:
 		var terrain_map = MapToText()
 		print(terrain_map)
+
+func _on_ai_model_loaded(success: bool, response: Dictionary):
+	if success:
+		print("[AI_DEBUG] Model is ready. Generating initial AI level...")
+		AI_Generator.generate_level()
+	else:
+		print("[AI_DEBUG] Model load failed. Falling back to local dataset.")
+		Map = levels[0]
+		TextToMap()
 
 func getId(tiledata):
 	var Id = -1
@@ -130,7 +186,11 @@ func clear_enemies():
 func TextToMap():
 	Layer.clear()
 	clear_enemies()
-	print("loaded map with difficulty: ", currentDifficulty)
+	print("[AI_DEBUG] Rendering map with difficulty: ", currentDifficulty)
+	
+	if MiniMap and MiniMap.has_method("generate_preview"):
+		MiniMap.generate_preview(Map)
+		print("[AI_DEBUG] MiniMap updated.")
 	var offset = Vector2i(8*2, 8) * 2
 	var layer_data := []
 	
@@ -165,11 +225,48 @@ func TextToMap():
 				Layer.set_cell(Vector2i(x, y) - offset, SheetId, Coordinate)
 
 	Layer.notify_runtime_tile_data_update()
+	update_player_spawn(layer_data, offset)
+
+func update_player_spawn(layer_data: Array, offset: Vector2i):
+	# Scan first few columns to find ground
+	var spawn_x = 2 # Start a bit in
+	var spawn_y = 0
+	
+	# Try to find the highest solid block in column spawn_x
+	for y in range(layer_data.size()-1, -1, -1):
+		var tileId = layer_data[y][spawn_x]
+		if tileId == 0 or tileId == 1: # Solid or Breakable
+			spawn_y = y - 1 # Position above it
+			break
+	
+	var player = get_tree().get_first_node_in_group("Player")
+	if player:
+		var new_spawn = (Vector2i(spawn_x, spawn_y) - offset) * Layer.tile_set.tile_size
+		player.spawnLocation = new_spawn
+		player.position = new_spawn
+		player.velocity = Vector2.ZERO
+		player.is_transitioning = false
+		print("[AI_DEBUG] Safe spawn found at: ", new_spawn)
 
 func ChangeMap(playerLevel):
-	var data = get_closest_level("res://Resources/Dataset/Processed/", playerLevel)
-	Map = data["content"]
-	currentDifficulty = data["difficulty"]
+	print("[AI_DEBUG] ChangeMap triggered with player level:", playerLevel)
+	if AI_Generator:
+		AI_Generator.difficulty = playerLevel
+		AI_Generator.generate_level()
+	else:
+		print("[AI_DEBUG] Falling back to local files.")
+		var data = get_closest_level("res://Resources/Dataset/Processed/", playerLevel)
+		Map = data["content"]
+		currentDifficulty = data["difficulty"]
+		TextToMap()
+	
+	if HUD:
+		HUD.update_deaths(0) # Reset on map change
+
+func _on_ai_level_generated(grid_string: String, difficulty_label: String):
+	print("[AI_DEBUG] Received AI Level. Difficulty Label:", difficulty_label)
+	Map = grid_string
+	# Extract numeric difficulty if possible from label or keep old
 	TextToMap()
 
 func MapToText() -> String:

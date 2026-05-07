@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c64w5ncxo7j3x"]
 
 [ext_resource type="PackedScene" uid="uid://bmy3kdndn3ik8" path="res://Scenes/Levels/level.tscn" id="1_nep6i"]
-[ext_resource type="Script" path="res://Scenes/Levels/Gemini.gd" id="3_01viu"]
+[ext_resource type="Script" uid="uid://bf6gunl30j2yn" path="res://Scenes/Levels/Gemini.gd" id="3_01viu"]
 
 [sub_resource type="Gradient" id="Gradient_01viu"]
 colors = PackedColorArray(0.517647, 0.670588, 1, 1, 0.515792, 0.672529, 1, 1)
@@ -20,127 +20,8 @@ map_path = "res://Resources/Dataset/Processed/mario-1-1.txt"
 z_index = 2
 position = Vector2(-398, -161)
 
-[node name="Gemini" type="Node" parent="Island"]
+[node name="Gemini2" type="Node" parent="Island"]
 script = ExtResource("3_01viu")
-GEMINI_API_KEY = "AIzaSyD0opewX0LMtpRsvvvK7NMW60sPFDWPeac"
-system_prompt = "Got it. Below is a **complete, high-quality Mario level generation prompt WITH examples**, written so an AI can clearly imitate the style, density, and structure.
-
-You can paste this directly into a generator or model instruction.
-
----
-
-You are a **procedural level generator for a 2D side-scrolling Mario-style platformer**.
-
-You must output **only the ASCII level** — no explanations, no code, no labels, no borders, no markdown.
-
----
-
-### Tile Legend
-
-* `-` = Empty air
-* `X` = Solid ground / walls (impassable)
-* `S` = Standard platform
-* `Q` = Question block
-* `?` = Hidden / special block
-* `E` = Enemy
-* `<` `>` = Slopes
-* `[` `]` = Pipes
-
----
-
-### Core Rules
-
-* The output must be a **perfect rectangle**:
-  Every row has the **exact same number of characters**.
-* The level scrolls **left → right**.
-* **Difficulty increases gradually** from left to right.
-* The bottom portion contains **continuous solid ground (`X`)** with safe gaps only.
-* All jumps must be **possible with normal Mario physics**.
-* No floating enemies.
-* No impossible traps.
-* No unavoidable damage.
-
----
-
-### Placement Rules
-
-* **Ground (`X`)**
-
-  * Forms the base of the level.
-  * May rise using slopes.
-* **Platforms (`S`)**
-
-  * Placed above ground in reachable jump patterns.
-  * Often appear in chains.
-* **Question blocks (`Q`)**
-
-  * Usually placed above ground or platforms.
-  * Often grouped (2–4 blocks).
-* **Special blocks (`?`)**
-
-  * Used sparingly.
-  * Placed in risky or hidden spots.
-* **Enemies (`E`)**
-
-  * Always on ground, platforms, or pipes.
-  * Fair spacing.
-* **Pipes (`[` `]`)**
-
-  * Always placed on solid ground.
-  * Can be obstacles or entrances.
-* **Slopes (`<` `>`)**
-
-  * Used for smooth elevation changes.
-  * Never stacked unnaturally.
-
----
-
-### Style Goals
-
-* Left side: simple, open, safe.
-* Middle: platforms, enemies, question blocks.
-* Right side: tighter jumps, layered terrain, more challenge.
-* The level must feel **handcrafted and readable**, not random.
-
----
-
-### Example Level 1 (Simple → Medium)
-
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------E---
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------------------------------E----------------------------------------------------
----------------------------------------------------------------------------S-------SSS------------------SSQSSS?SSS--------SSS------------------SQS--SQS--------------------------------XXX-----------
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------XXXX-----------
---------------------------------------------------------------------------------------------------------------------------------------XX-------------------------o------XX-----------EXXXX-----------
-------------Q--?----------------E-----------------------------------------E-EE-------------------E------------------------SSS--------XXX--------------------------E-----XX----------XXXXXX-----------
----------Q-E------ESSS----E----<>------------------E--S--------------X--------XX-XX-------------<>------SSSSSSSSSSS-----------------XXXX-------SQS--S?S--------SSSSS----XX---------XXXXXXX-----------
------------E-------------<>----[]-----------------<>---------E------XXX-------XX-XX-------------[]---------------------------------XXXXX--------------------E--E-------XXX-------EXXXXXXXX-----------
--------------------------[]----[]-----------------[]--------<>-----XXXX-------XX-XXX------------[]--------------------------------XXXXXX---------------------------E---XXX-------XXXXXXXXX-----------
--------------------------[]---E[]-----------EE-E--[]-E------[]----XXXX--------X--XXX--E-E---E---[]-------------------------------XXXXXXX-----E-----E-------------------XXX------XXXXXXXXXX-------XX--
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX---XXXXXXXXXXXXXXXXXXXXXXXXXXXXX--------X--XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX----XXXXXXXXXX--XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX---XXXXXXXXXXXXXXXXXXXXXXXX
-
-
-### Output Rules (Strict)
-
-* Output **only ONE ASCII level**.
-* No explanations.
-* No markdown.
-* No extra lines before or after.
-
----
-
-If you want next:
-
-* A **Mario Maker–accurate physics version**
-* A **chunk-based generator prompt**
-* A **difficulty-conditioned version**
-* A **prompt optimized for diffusion / LLM stability**
-
-Just tell me which one.
-"
-Temperature = 0.64
 
 [node name="Sprite2D" type="Sprite2D" parent="Island"]
 position = Vector2(-331, -378)
@@ -148,6 +29,6 @@ scale = Vector2(45.9219, 7686)
 texture = SubResource("GradientTexture1D_5ohet")
 metadata/_edit_lock_ = true
 
-[connection signal="generation" from="Island/Gemini" to="Island" method="_on_gemini_generation"]
+[connection signal="generation" from="Island/Gemini2" to="Island" method="_on_gemini_generation"]
 
 [editable path="Island"]
