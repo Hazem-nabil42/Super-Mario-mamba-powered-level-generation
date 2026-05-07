@@ -5,10 +5,34 @@
 [ext_resource type="PackedScene" uid="uid://n0yxyoxlhxje" path="res://Scenes/Characters/Player.tscn" id="3_lghg4"]
 
 [sub_resource type="Environment" id="Environment_fl01k"]
+background_mode = 3
+background_canvas_max_layer = -1
+glow_enabled = true
+glow_intensity = 0.5
+glow_strength = 0.8
+glow_blend_mode = 0
+adjustment_enabled = true
+adjustment_brightness = 1.1
+adjustment_contrast = 1.1
+adjustment_saturation = 1.2
 
 [node name="Level" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_nrhgr")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(1, 1, 1, 1)
+
+[node name="BackgroundColor" type="CanvasLayer" parent="."]
+layer = -100
+
+[node name="ColorRect" type="ColorRect" parent="BackgroundColor"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.407843, 0.690196, 1, 1)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_fl01k")

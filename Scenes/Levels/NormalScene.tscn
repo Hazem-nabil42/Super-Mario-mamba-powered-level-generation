@@ -16,7 +16,7 @@ position = Vector2(8, 0)
 Layer = NodePath("Objects")
 map_path = "res://Resources/Dataset/Processed/mario-1-1.txt"
 
-[node name="Player" parent="Island" index="2"]
+[node name="Player" parent="Island" index="4"]
 z_index = 2
 position = Vector2(-398, -161)
 
