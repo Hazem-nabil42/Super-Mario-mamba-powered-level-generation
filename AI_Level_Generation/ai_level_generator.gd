@@ -5,7 +5,7 @@ signal model_loaded(success: bool, response: Dictionary)
 signal level_generated(grid_string: String, difficulty_label: String)
 signal generation_failed(error: String, response: String)
 
-@export var model_path: String = "https://mario_backend.hf.space/mario_model_mamba.pt"
+@export var model_path: String = "/mario_model_mamba.pt"
 @export var difficulty: float = 0.3
 @export var seed_number: int = 0
 @export var use_auto_path: bool = true
