@@ -99,6 +99,6 @@ M2={
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.407843, 0.690196, 1, 1)
 textures/canvas_textures/default_texture_filter=0
 textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.407843, 0.690196, 1, 1)

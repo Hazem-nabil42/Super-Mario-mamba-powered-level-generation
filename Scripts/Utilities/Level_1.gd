@@ -26,6 +26,13 @@ var INDEX_SYMBOL = {
 	8: "[",
 	9: "]",
 }
+
+var _cached_player
+func get_player():
+	if _cached_player == null:
+		_cached_player = get_tree().get_first_node_in_group("Player")
+	return _cached_player
+
 var SYMBOL_INDEX = reverse_dict(INDEX_SYMBOL)
 
 func IndexToSymbol(index):
@@ -180,8 +187,8 @@ func clear_enemies():
 	for enemy in enemies:
 		if is_instance_valid(enemy):
 			enemy.queue_free()
-	
 	enemies.clear()
+	await get_tree().process_frame
 
 func TextToMap():
 	Layer.clear()
@@ -193,6 +200,10 @@ func TextToMap():
 		print("[AI_DEBUG] MiniMap updated.")
 	var offset = Vector2i(8*2, 8) * 2
 	var layer_data := []
+	
+	# before loop
+	# Removed set_deferred visibility toggle which was causing ground to vanish
+	
 	
 	for line in Map.split("\n"):
 		line = line.strip_edges()
@@ -210,6 +221,12 @@ func TextToMap():
 	for row in layer_data:
 		rightmost_bound = max(rightmost_bound, row.size())
 	rightmost_world = (rightmost_bound - offset.x) * Layer.tile_set.tile_size.x
+	
+	# Goal flag instantiation moved after spawn/layer loop to find ground Y
+	for old in get_tree().get_nodes_in_group("EndFlagGroup"):
+		old.queue_free()
+	
+	
 	for y in range(layer_data.size()):
 		for x in range(layer_data[y].size()):
 			var tileId = layer_data[y][x]
@@ -224,32 +241,61 @@ func TextToMap():
 			else:
 				Layer.set_cell(Vector2i(x, y) - offset, SheetId, Coordinate)
 
+	# Find ground Y for the goal flag
+	var flag_y = 0
+	var last_cols = [rightmost_bound-1, rightmost_bound-2, rightmost_bound-3]
+	var found_flag_y = false
+	for fx in last_cols:
+		for ty in range(layer_data.size()-1, -1, -1):
+			if fx >= 0 and fx < layer_data[ty].size():
+				var tid = layer_data[ty][fx]
+				if tid == 0 or tid == 1:
+					flag_y = (ty - offset.y) * Layer.tile_set.tile_size.y
+					found_flag_y = true
+					break
+		if found_flag_y: break
+	
+	var goal_scene = preload("res://Scenes/UI/goal_flag.tscn")
+	if goal_scene:
+		var goal = goal_scene.instantiate()
+		goal.position = Vector2(rightmost_world - Layer.tile_set.tile_size.x * 2.0, flag_y)
+		add_child(goal)
+
 	Layer.notify_runtime_tile_data_update()
 	update_player_spawn(layer_data, offset)
+	# Removed visibility toggle
+	
 
 func update_player_spawn(layer_data: Array, offset: Vector2i):
-	# Scan first few columns to find ground
-	var spawn_x = 2 # Start a bit in
+	var spawn_x = 0
 	var spawn_y = 0
+	var found = false
 	
-	# Try to find the highest solid block in column spawn_x
-	for y in range(layer_data.size()-1, -1, -1):
-		var tileId = layer_data[y][spawn_x]
-		if tileId == 0 or tileId == 1: # Solid or Breakable
-			spawn_y = y - 1 # Position above it
-			break
+	for x in range(1, 6): # Check up to column 5
+		for y in range(layer_data.size()):
+			if x < layer_data[y].size():
+				var tileId = layer_data[y][x]
+				if tileId == 0 or tileId == 1:
+					if y-3 >= 0 and layer_data[y-3][x] == -1: # Solid or Breakable
+						spawn_x = x
+						spawn_y = y - 2 # 2 blocks above floor
+						found = true
+						break
+		if found: break
 	
-	var player = get_tree().get_first_node_in_group("Player")
+	var new_spawn = (Vector2i(spawn_x, spawn_y) - offset) * Layer.tile_set.tile_size
+	get_tree().call_group("Player", "unfreeze")
+	
+	var player = get_player()
 	if player:
-		var new_spawn = (Vector2i(spawn_x, spawn_y) - offset) * Layer.tile_set.tile_size
 		player.spawnLocation = new_spawn
 		player.position = new_spawn
 		player.velocity = Vector2.ZERO
-		player.is_transitioning = false
-		print("[AI_DEBUG] Safe spawn found at: ", new_spawn)
+		print("[AI_DEBUG] Safe spawn found and player unfrozen at: ", new_spawn)
 
 func ChangeMap(playerLevel):
 	print("[AI_DEBUG] ChangeMap triggered with player level:", playerLevel)
+	get_tree().call_group("Player", "freeze")
 	if AI_Generator:
 		AI_Generator.difficulty = playerLevel
 		AI_Generator.generate_level()

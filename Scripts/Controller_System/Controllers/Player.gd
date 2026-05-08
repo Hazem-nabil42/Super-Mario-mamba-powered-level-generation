@@ -16,6 +16,7 @@ var is_transitioning = false
 
 func _ready():
 	spawnLocation = position
+	is_transitioning = true
 	get_parent().EnemyDeath.connect(func(enemy):
 		Force = 120
 	)
@@ -48,15 +49,8 @@ func _physics_process(delta: float) -> void:
 		return
 		
 	endTime += delta
-	if not is_transitioning and position.x > get_parent().rightmost_world:
-		is_transitioning = true
-		velocity = Vector2.ZERO
-		estimateLevel()
-		get_parent().ChangeMap(playerLevel)
-		# Wait a frame or two before teleporting or do it immediately
-		position = spawnLocation
-		# Important: We keep is_transitioning true until Level_1 tells us the map is ready
-		# and it will reset it in update_player_spawn()
+	if not is_transitioning and position.x > get_parent().rightmost_world + 300:
+		win_level()
 		
 	if position.y > 100:
 		die()
@@ -96,6 +90,15 @@ func _physics_process(delta: float) -> void:
 	velocity.y = clamp(velocity.y, -500, 500)
 	move_and_slide()
 
+func win_level():
+	if is_transitioning: return
+	is_transitioning = true
+	velocity = Vector2.ZERO
+	estimateLevel()
+	if get_parent().has_method("ChangeMap"):
+		get_parent().ChangeMap(playerLevel)
+	position = spawnLocation
+
 func win():
 	pass
 
@@ -130,6 +133,13 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 	if body.is_in_group("Enemy"):
 		die()
 		
+func freeze():
+	is_transitioning = true
+	velocity = Vector2.ZERO
+
+func unfreeze():
+	is_transitioning = false
+
 # Adaptive level generation
 func get_adaptive_difficulty() -> float:
 	var death_factor = clamp(deathTimes / 3.0, 0.0, 1.0)

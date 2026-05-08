@@ -76,13 +76,14 @@ script = ExtResource("12_sipgu")
 [node name="Vision" parent="." index="4"]
 visible = true
 position = Vector2(0, -5)
-color = Color(0.577362, 0.807441, 1, 1)
-energy = 0.2
-texture_scale = 0.5
+color = Color(1, 0.97, 0.92, 1)
+energy = 0.06
+texture_scale = 1.6
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." index="5"]
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" index="0"]
+visible = false
 material = SubResource("ShaderMaterial_m5ivh")
 offset_right = 1920.0
 offset_bottom = 1080.0

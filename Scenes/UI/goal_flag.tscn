@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://byhtdr8jfh8dx"]
+
+[ext_resource type="Script" uid="uid://ddh6ii0gnnn1g" path="res://Scripts/Utilities/goal_flag.gd" id="1_j5gef"]
+
+[node name="GoalFlag" type="Node2D"]
+script = ExtResource("1_j5gef")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+
+[node name="Pole" type="Sprite2D" parent="."]
+
+[node name="Flag" type="Sprite2D" parent="."]
+
+[node name="AnimationPlayer" type="AnimatedSprite2D" parent="."]
+animation = &""

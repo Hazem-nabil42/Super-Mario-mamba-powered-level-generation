@@ -125,4 +125,62 @@ static func render_text_map(parent_node: Node2D, layer: TileMapLayer, map_text: 
 
 	layer.notify_runtime_tile_data_update()
 	print("[LEVEL_RENDERER] Render complete. rightmost_world=", new_rightmost)
+	
+	# Spawn Point Calculation
+	var found_spawn = false
+	var spawn_pos = Vector2.ZERO
+	for x in range(min(4, rightmost_bound)):
+		for y in range(layer_data.size()):
+			if x < layer_data[y].size():
+				var tile_id = layer_data[y][x]
+				var symbol = INDEX_SYMBOL.get(tile_id, "-")
+				if symbol in ["X", "S", "?", "Q", "<", ">", "[", "]"]:
+					spawn_pos = (Vector2(x, y - 2) - Vector2(offset)) * Vector2(layer.tile_set.tile_size)
+					found_spawn = true
+					break
+		if found_spawn:
+			break
+	
+	if found_spawn:
+		var players = parent_node.get_tree().get_nodes_in_group("Player")
+		for pl in players:
+			pl.spawnLocation = spawn_pos
+			pl.position = spawn_pos
+	
+	# End Flag Creation
+	for old in parent_node.get_tree().get_nodes_in_group("EndFlagGroup"):
+		old.queue_free()
+		
+	var flag_area = Area2D.new()
+	flag_area.add_to_group("EndFlagGroup")
+	var col = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(100, 2000) # Tall trigger area
+	col.shape = shape
+	flag_area.add_child(col)
+	
+	var vis = ColorRect.new()
+	vis.size = Vector2(8, 200)
+	vis.color = Color.GOLD
+	vis.position = Vector2(-4, -100)
+	
+	var pennant = ColorRect.new()
+	pennant.size = Vector2(60, 40)
+	pennant.color = Color.RED
+	pennant.position = Vector2(4, -100)
+	vis.add_child(pennant)
+	
+	flag_area.add_child(vis)
+	
+	# Place the flag a bit before the structural edge to be safe
+	flag_area.position = Vector2(new_rightmost - tile_size_x * 2, 0)
+	flag_area.collision_mask = 1 # Player collision layer
+	
+	flag_area.body_entered.connect(func(body):
+		if body.is_in_group("Player") and body.has_method("win_level"):
+			body.win_level()
+	)
+	
+	parent_node.add_child(flag_area)
+	
 	return new_rightmost
