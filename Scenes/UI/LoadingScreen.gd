@@ -21,16 +21,15 @@ func _ready():
 	_start_pulse_animation()
 
 func _setup_font_for_emojis():
-	# Godot's default font doesn't support emojis. 
-	# Creating a SystemFont helps the OS use its native emoji glyphs.
-	var sys_font = SystemFont.new()
-	# We can specify fallback names, but an empty SystemFont usually finds the best match.
-	sys_font.font_names = PackedStringArray(["Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "EmojiOne Color", "Android Emoji", "EmojiSymbol"])
-	sys_font.generate_mipmaps = true
-	label.add_theme_font_override("font", sys_font)
-	# Also disable uppercase for the label if we want emojis to be more stable, 
-	# though Godot 4 handles uppercase emojis reasonably well.
-	# label.uppercase = false 
+	var font = FontFile.new()
+	font.load("res://assets/fonts/NotoColorEmoji-Regular.ttf")
+	
+	# مهم جداً للويب
+	font.antialiasing = TextServer.FONT_ANTIALIASING_LCD
+	font.generate_mipmaps = true
+	font.msdf = false
+	
+	label.add_theme_font_override("font", font)
 
 
 func _start_pulse_animation():
