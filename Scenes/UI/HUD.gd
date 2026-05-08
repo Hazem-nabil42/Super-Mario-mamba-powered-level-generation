@@ -5,10 +5,10 @@ extends CanvasLayer
 func _ready():
 	add_to_group("HUD")
 	update_deaths(0)
-	# ✅ Fix 1: Check platform name directly instead of touchscreen availability
-	var platform = OS.get_name()
-	if platform == "Android" or platform == "iOS":
-		_add_mobile_controls()
+	# ✅ OS.has_feature("mobile") هو الطريقة الصح في Godot 4
+	# بيرجع true على Android و iOS فقط، مش على PC
+	if OS.has_feature("mobile"):
+		call_deferred("_add_mobile_controls")
 
 func update_deaths(death_count: int):
 	var total = 3
@@ -46,26 +46,20 @@ func _create_mobile_btn(action_name: String, pos: Vector2, size: Vector2, txt: S
 	add_child(vis)
 
 func _add_mobile_controls():
-	# ✅ Fix 2: Wait one frame so viewport size is fully initialized
-	await get_tree().process_frame
-	
 	var screen = get_viewport().get_visible_rect().size
-	print("[HUD] Screen size: ", screen)
+	print("[HUD] Mobile detected! Screen: ", screen)
 	
 	var btn_size_val = clamp(screen.x * 0.12, 80.0, 200.0)
 	var btn_v_size = Vector2(btn_size_val, btn_size_val)
 	var jump_size = Vector2(btn_size_val * 1.3, btn_size_val * 1.3)
 	
 	var margin_x = screen.x * 0.04
-	# ✅ Fix 3: Small fixed margin so buttons stay fully inside screen
 	var margin_bottom = 20.0
 	
-	# Left & Right buttons — bottom-left area
 	var left_right_y = screen.y - btn_v_size.y - margin_bottom
 	_create_mobile_btn("Left",  Vector2(margin_x, left_right_y), btn_v_size, "<")
 	_create_mobile_btn("Right", Vector2(margin_x + btn_v_size.x + margin_x, left_right_y), btn_v_size, ">")
 	
-	# Jump button — bottom-right area
 	var jump_x = screen.x - jump_size.x - margin_x
 	var jump_y = screen.y - jump_size.y - margin_bottom
 	_create_mobile_btn("Jump", Vector2(jump_x, jump_y), jump_size, "UP")
