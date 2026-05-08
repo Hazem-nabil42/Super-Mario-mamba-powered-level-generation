@@ -45,10 +45,6 @@ Character=""
 Player=""
 Enemy=""
 
-[gui]
-
-theme/custom_font="uid://bg6axp6thyq5"
-
 [input]
 
 Up={

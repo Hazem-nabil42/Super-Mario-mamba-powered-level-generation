@@ -21,15 +21,25 @@ func _ready():
 	_start_pulse_animation()
 
 func _setup_font_for_emojis():
-	var font = FontFile.new()
-	font.load("res://assets/fonts/NotoColorEmoji-Regular.ttf")
+	var emoji_font = load("res://Assets/Fonts/NotoColorEmoji-Regular.ttf")
+	var base_font = load("res://Assets/Fonts/FiraCode-Bold.ttf")
 	
-	# مهم جداً للويب
-	font.antialiasing = TextServer.FONT_ANTIALIASING_LCD
-	font.generate_mipmaps = true
-	font.msdf = false
-	
-	label.add_theme_font_override("font", font)
+	if emoji_font is FontFile:
+		var variation = FontVariation.new()
+		if base_font is FontFile:
+			variation.base_font = base_font
+			
+		variation.fallbacks = [emoji_font]
+		label.add_theme_font_override("font", variation)
+		
+		# 'uppercase = true' can sometimes interfere with Unicode/Emoji glyph lookup.
+		# We'll disable it and capitalize the text manually.
+		label.uppercase = false
+		label.text = label.text.to_upper()
+	else:
+		push_warning("Could not load NotoColorEmoji-Regular.ttf from res://Assets/Fonts/")
+
+
 
 
 func _start_pulse_animation():
