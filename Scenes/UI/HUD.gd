@@ -5,10 +5,21 @@ extends CanvasLayer
 func _ready():
 	add_to_group("HUD")
 	update_deaths(0)
-	# ✅ OS.has_feature("mobile") هو الطريقة الصح في Godot 4
-	# بيرجع true على Android و iOS فقط، مش على PC
-	if OS.has_feature("mobile"):
+
+	if _is_touch_device():
+		print("[HUD] Touch device detected → show mobile controls")
 		call_deferred("_add_mobile_controls")
+	else:
+		print("[HUD] Desktop detected → hide mobile controls")
+		
+func _is_touch_device() -> bool:
+	# 1️⃣ موبايل حقيقي (Android / iOS)
+	var mobile_platform := OS.get_name() == "Android" or OS.get_name() == "iOS"
+	
+	# 2️⃣ جهاز فيه Touch screen (تابلت ويندوز مثلاً)
+	var has_touch := DisplayServer.is_touchscreen_available()
+	
+	return mobile_platform or has_touch
 
 func update_deaths(death_count: int):
 	var total = 3
