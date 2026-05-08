@@ -5,7 +5,7 @@ extends CanvasLayer
 func _ready():
 	add_to_group("HUD")
 	update_deaths(0) # Initial display
-	if OS.has_feature("web") or OS.has_feature("mobile"):
+	if OS.has_feature("mobile") or DisplayServer.is_touchscreen_available():
 		_add_mobile_controls()
 
 func update_deaths(death_count: int):
@@ -53,9 +53,13 @@ func _add_mobile_controls():
 	var screen = get_viewport().get_visible_rect().size
 	print("[AI_DEBUG] Adding mobile controls for screen size: ", screen)
 	
-	var btn_v_size = Vector2(180, 180)
-	var margin_x = 80
-	var margin_y = 120 # Higher margin to avoid mobile home bars
+	# Responsive sizing: 15% of screen width (with limits)
+	var btn_size_val = clamp(screen.x * 0.12, 100.0, 250.0)
+	var btn_v_size = Vector2(btn_size_val, btn_size_val)
+	var jump_size = Vector2(btn_size_val * 1.3, btn_size_val * 1.3)
+	
+	var margin_x = screen.x * 0.05
+	var margin_y = screen.y * 0.20 # 20% margin from bottom to avoid home bars and stay fully visible
 	
 	var bottom_y = screen.y - btn_v_size.y - margin_y
 	
@@ -63,8 +67,7 @@ func _add_mobile_controls():
 	_create_mobile_btn("Left", Vector2(margin_x, bottom_y), btn_v_size, "<")
 	
 	# Right Button
-	_create_mobile_btn("Right", Vector2(margin_x + btn_v_size.x + 40, bottom_y), btn_v_size, ">")
+	_create_mobile_btn("Right", Vector2(margin_x + btn_v_size.x + (screen.x * 0.05), bottom_y), btn_v_size, ">")
 	
 	# Jump Button
-	var jump_size = Vector2(250, 250)
 	_create_mobile_btn("Jump", Vector2(screen.x - jump_size.x - margin_x, screen.y - jump_size.y - margin_y), jump_size, "UP")
